@@ -34,7 +34,7 @@ let package = Package(
         .binaryTarget(
             name: "Sentencepiece",
             url:
-                "https://github.com/jkrukowski/swift-sentencepiece/releases/download/v0.0.1/sentencepiece.xcframework.zip",
+                "https://github.com/jkrukowski/swift-sentencepiece/releases/download/0.0.1/sentencepiece.xcframework.zip",
             checksum: "e2093b63b413664eefa25e3a2be27863c038fd54eb8a12f12563bab8da0f872a"
         ),
         .target(
