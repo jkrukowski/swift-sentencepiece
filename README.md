@@ -44,15 +44,15 @@ print(decoded)
 To run the command line demo, use the following command:
 
 ```bash
-swift run sentencepiece-cli  --model-path <model-path> [--text <text>]
+swift run sentencepiece-cli --model-path <model-path> [--text <text>]
 ```
 
 Command line options:
 
 ```bash
-  --model-path <model-path>
-  --text <text>           (default: Hello, world!)
-  -h, --help              Show help information.
+--model-path <model-path>
+--text <text>           (default: Hello, world!)
+-h, --help              Show help information.
 ```
 
 ## Code Formatting
