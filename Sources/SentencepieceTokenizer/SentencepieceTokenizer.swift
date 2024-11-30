@@ -4,8 +4,7 @@ extension SentencepieceTokenizer {
     public enum Error: Swift.Error {
         case failedToCreateProcessor
         case failedToLoadModel
-        case failedToEncode
-        case failedToDecode
+        case failedToProcess
     }
 }
 
@@ -50,7 +49,7 @@ public final class SentencepieceTokenizer {
 
     public func normalize(_ text: String) throws -> String {
         guard let normalizedPtr = spm_normalize(processor, text) else {
-            throw Error.failedToEncode
+            throw Error.failedToProcess
         }
         defer { normalizedPtr.deallocate() }
         return String(cString: normalizedPtr)
@@ -58,7 +57,7 @@ public final class SentencepieceTokenizer {
 
     public func idToToken(_ id: Int) throws -> String {
         guard let tokenPtr = spm_id_to_piece(processor, Int32(id - tokenOffset)) else {
-            throw Error.failedToEncode
+            throw Error.failedToProcess
         }
         defer { tokenPtr.deallocate() }
         return String(cString: tokenPtr)
@@ -67,7 +66,7 @@ public final class SentencepieceTokenizer {
     public func encode(_ text: String) throws -> [Int] {
         var size: Int32 = 0
         guard let encodedPtr = spm_encode(processor, text, &size) else {
-            throw Error.failedToEncode
+            throw Error.failedToProcess
         }
         defer { encodedPtr.deallocate() }
         let result = Array(UnsafeBufferPointer(start: encodedPtr, count: Int(size)))
@@ -77,7 +76,7 @@ public final class SentencepieceTokenizer {
     public func decode(_ ids: [Int]) throws -> String {
         let encoded = ids.map { Int32($0 - tokenOffset) }
         guard let decodedPtr = spm_decode(processor, encoded, Int32(encoded.count)) else {
-            throw Error.failedToDecode
+            throw Error.failedToProcess
         }
         defer { decodedPtr.deallocate() }
         return String(cString: decodedPtr)
