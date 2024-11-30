@@ -8,7 +8,7 @@ Add the following to your `Package.swift` file. In the package dependencies add:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jkrukowski/swift-sentencepiece", from: "0.0.1")
+    .package(url: "https://github.com/jkrukowski/swift-sentencepiece", from: "0.0.2")
 ]
 ```
 
@@ -35,7 +35,7 @@ let encoded = tokenizer.encode("Hello, world!")
 print(encoded)
 
 // decode tokens
-let decoded = tokenizer.decode([902, 82, 3059, 7985])
+let decoded = tokenizer.decode([35378, 4, 8999, 38])
 print(decoded)
 ```
 
