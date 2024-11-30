@@ -9,30 +9,35 @@ extension SentencepieceTokenizer {
     }
 }
 
-public class SentencepieceTokenizer {
+public final class SentencepieceTokenizer {
     private let processor: UnsafeMutableRawPointer
+    private let tokenOffset: Int
 
     deinit {
         spm_free_sentencepiece_processor(processor)
     }
 
     public var unkTokenId: Int {
-        Int(spm_unk_id(processor))
+        Int(spm_unk_id(processor)) + tokenOffset
     }
 
     public var bosTokenId: Int {
-        Int(spm_bos_id(processor))
+        Int(spm_bos_id(processor)) + tokenOffset
     }
 
     public var eosTokenId: Int {
-        Int(spm_eos_id(processor))
+        Int(spm_eos_id(processor)) + tokenOffset
     }
 
     public var padTokenId: Int {
-        Int(spm_pad_id(processor))
+        Int(spm_pad_id(processor)) + tokenOffset
     }
 
-    public init(modelPath: String) throws {
+    /// Initialize SentencepieceTokenizer with a model file.
+    ///
+    /// NOTE: `tokenOffset` is used to adjust the token ids
+    /// to be compatible with Hugging Face tokenizers.
+    public init(modelPath: String, tokenOffset: Int = 1) throws {
         guard let processor = spm_new_sentencepiece_processor() else {
             throw Error.failedToCreateProcessor
         }
@@ -40,6 +45,23 @@ public class SentencepieceTokenizer {
             throw Error.failedToLoadModel
         }
         self.processor = processor
+        self.tokenOffset = tokenOffset
+    }
+
+    public func normalize(_ text: String) throws -> String {
+        guard let normalizedPtr = spm_normalize(processor, text) else {
+            throw Error.failedToEncode
+        }
+        defer { normalizedPtr.deallocate() }
+        return String(cString: normalizedPtr)
+    }
+
+    public func idToToken(_ id: Int) throws -> String {
+        guard let tokenPtr = spm_id_to_piece(processor, Int32(id - tokenOffset)) else {
+            throw Error.failedToEncode
+        }
+        defer { tokenPtr.deallocate() }
+        return String(cString: tokenPtr)
     }
 
     public func encode(_ text: String) throws -> [Int] {
@@ -49,13 +71,12 @@ public class SentencepieceTokenizer {
         }
         defer { encodedPtr.deallocate() }
         let result = Array(UnsafeBufferPointer(start: encodedPtr, count: Int(size)))
-        return result.map { Int($0) }
+        return result.map { Int($0) + tokenOffset }
     }
 
     public func decode(_ ids: [Int]) throws -> String {
-        let encoded = ids.map { Int32($0) }
-        var size: Int32 = 0
-        guard let decodedPtr = spm_decode(processor, encoded, Int32(encoded.count), &size) else {
+        let encoded = ids.map { Int32($0 - tokenOffset) }
+        guard let decodedPtr = spm_decode(processor, encoded, Int32(encoded.count)) else {
             throw Error.failedToDecode
         }
         defer { decodedPtr.deallocate() }

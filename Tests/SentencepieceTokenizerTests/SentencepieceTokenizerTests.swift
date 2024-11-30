@@ -12,15 +12,23 @@ import Testing
     let ouput1 = try tokenizer.decode(tokenizer.encode(inputText))
     #expect(ouput1 == inputText)
 
-    let inputTokens = [35377, 3, 8998, 37]
+    let inputTokens = [35378, 4, 8999, 38]
     let ouput2 = try tokenizer.encode(tokenizer.decode(inputTokens))
     #expect(ouput2 == inputTokens)
+
+    let normalized = try tokenizer.normalize("Hello, world!")
+    #expect(normalized == "▁Hello,▁world!")
+
+    try #expect(tokenizer.idToToken(35378) == "▁Hello")
+    try #expect(tokenizer.idToToken(4) == ",")
+    try #expect(tokenizer.idToToken(8999) == "▁world")
+    try #expect(tokenizer.idToToken(38) == "!")
 
     try #expect(tokenizer.decode([]) == "")
     try #expect(tokenizer.encode("") == [])
 
-    #expect(tokenizer.padTokenId == -1)
-    #expect(tokenizer.unkTokenId == 0)
-    #expect(tokenizer.bosTokenId == 1)
-    #expect(tokenizer.eosTokenId == 2)
+    #expect(tokenizer.padTokenId == 0)
+    #expect(tokenizer.unkTokenId == 1)
+    #expect(tokenizer.bosTokenId == 2)
+    #expect(tokenizer.eosTokenId == 3)
 }
