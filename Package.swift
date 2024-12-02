@@ -10,6 +10,7 @@ let package = Package(
         .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
+        .visionOS(.v1),
     ],
     products: [
         .executable(
@@ -34,13 +35,19 @@ let package = Package(
         .binaryTarget(
             name: "Sentencepiece",
             url:
-                "https://github.com/jkrukowski/swift-sentencepiece/releases/download/0.0.3/sentencepiece.xcframework.zip",
-            checksum: "22030b37c036acd5ff961da112df92880340bc04ad991ccb233a81e9c49b50c1"
+                "https://github.com/jkrukowski/swift-sentencepiece/releases/download/0.0.4/sentencepiece.xcframework.zip",
+            checksum: "9168a242ffc75cdecb3bd21f4671842bb48d583d1cbc83e5a255d3e348622680"
         ),
         .target(
             name: "SentencepieceTokenizer",
             dependencies: [
                 "Sentencepiece"
+            ],
+            linkerSettings: [
+                .unsafeFlags(
+                    ["-lc++"],
+                    .when(platforms: [.visionOS])
+                )
             ]
         ),
         .testTarget(
