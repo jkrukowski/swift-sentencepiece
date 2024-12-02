@@ -10,7 +10,6 @@ let package = Package(
         .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
-        .visionOS(.v1),
     ],
     products: [
         .executable(
@@ -42,12 +41,6 @@ let package = Package(
             name: "SentencepieceTokenizer",
             dependencies: [
                 "Sentencepiece"
-            ],
-            linkerSettings: [
-                .unsafeFlags(
-                    ["-lc++"],
-                    .when(platforms: [.visionOS])
-                )
             ]
         ),
         .testTarget(
