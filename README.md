@@ -1,5 +1,8 @@
 # `swift-sentencepiece`
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjkrukowski%2Fswift-sentencepiece%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/jkrukowski/swift-sentencepiece)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjkrukowski%2Fswift-sentencepiece%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/jkrukowski/swift-sentencepiece)
+
 Use [SentencePiece](https://github.com/google/sentencepiece) in Swift for tokenization and detokenization.
 
 ## Installation
