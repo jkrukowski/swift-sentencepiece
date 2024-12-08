@@ -56,11 +56,16 @@ public final class SentencepieceTokenizer {
     }
 
     public func idToToken(_ id: Int) throws -> String {
+        precondition(id - tokenOffset >= 0)
         guard let tokenPtr = spm_id_to_piece(processor, Int32(id - tokenOffset)) else {
             throw Error.failedToProcess
         }
         defer { tokenPtr.deallocate() }
         return String(cString: tokenPtr)
+    }
+
+    public func tokenToId(_ token: String) -> Int {
+        Int(spm_piece_to_id(processor, token)) + tokenOffset
     }
 
     public func encode(_ text: String) throws -> [Int] {
@@ -73,6 +78,10 @@ public final class SentencepieceTokenizer {
         return result.map { Int($0) + tokenOffset }
     }
 
+    public func setEncodeExtraOptions(_ options: String) {
+        spm_set_encode_extra_options(processor, options)
+    }
+
     public func decode(_ ids: [Int]) throws -> String {
         let encoded = ids.map { Int32($0 - tokenOffset) }
         guard let decodedPtr = spm_decode(processor, encoded, Int32(encoded.count)) else {
@@ -80,5 +89,9 @@ public final class SentencepieceTokenizer {
         }
         defer { decodedPtr.deallocate() }
         return String(cString: decodedPtr)
+    }
+
+    public func setDecodeExtraOptions(_ options: String) {
+        spm_set_decode_extra_options(processor, options)
     }
 }

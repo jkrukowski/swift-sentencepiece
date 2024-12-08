@@ -26,6 +26,11 @@ final class SentencepieceTokenizerTests: XCTestCase {
         XCTAssertEqual(try tokenizer.idToToken(8999), "▁world")
         XCTAssertEqual(try tokenizer.idToToken(38), "!")
 
+        XCTAssertEqual(tokenizer.tokenToId("▁Hello"), 35378)
+        XCTAssertEqual(tokenizer.tokenToId(","), 4)
+        XCTAssertEqual(tokenizer.tokenToId("▁world"), 8999)
+        XCTAssertEqual(tokenizer.tokenToId("!"), 38)
+
         XCTAssertEqual(try tokenizer.decode([]), "")
         XCTAssertEqual(try tokenizer.encode(""), [])
 
@@ -33,5 +38,25 @@ final class SentencepieceTokenizerTests: XCTestCase {
         XCTAssertEqual(tokenizer.unkTokenId, 1)
         XCTAssertEqual(tokenizer.bosTokenId, 2)
         XCTAssertEqual(tokenizer.eosTokenId, 3)
+    }
+
+    func testSentencepieceEncodeExtraOptions() throws {
+        let modelPath = try XCTUnwrap(
+            Bundle.module.path(
+                forResource: "sentencepiece.bpe", ofType: "model", inDirectory: "Model"))
+        let tokenizer = try SentencepieceTokenizer(modelPath: modelPath)
+        tokenizer.setEncodeExtraOptions("reverse:bos:eos")
+        let output = try tokenizer.encode("Hello, world!")
+        XCTAssertEqual(output, [2, 38, 8999, 4, 35378, 3])
+    }
+
+    func testSentencepieceDecodeExtraOptions() throws {
+        let modelPath = try XCTUnwrap(
+            Bundle.module.path(
+                forResource: "sentencepiece.bpe", ofType: "model", inDirectory: "Model"))
+        let tokenizer = try SentencepieceTokenizer(modelPath: modelPath)
+        tokenizer.setDecodeExtraOptions("reverse:bos:eos")
+        let output = try tokenizer.decode([2, 35378, 4, 8999, 38, 3])
+        XCTAssertEqual(output, "! world, Hello")
     }
 }
