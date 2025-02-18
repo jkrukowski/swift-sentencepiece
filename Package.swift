@@ -45,7 +45,7 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedLibrary("c++"),
-                .linkedLibrary("stdc++")
+                .linkedLibrary("stdc++"),
             ]
         ),
         .testTarget(
